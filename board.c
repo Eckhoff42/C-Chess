@@ -82,6 +82,31 @@ char place_piece(char piece, int x, int y)
     return 0;
 }
 
+/*
+get piece at given coordinates.
+Returns :
+    the piece at the given position
+    127 if error
+*/
+char get_piece(int x, int y)
+{
+    // se om brikken er utenfor brettet
+    if (x > n || y > n || x < 0 || y < 0)
+    {
+        return 127;
+    }
+
+    char tuple = board[y][(x / 2)];
+    if (x % 2 == 0)
+    {
+        return get_left(tuple);
+    }
+    else
+    {
+        return get_right(tuple);
+    }
+}
+
 void init_board(int n)
 {
     int y, x;
@@ -121,7 +146,19 @@ void init_board(int n)
     }
 }
 
-int valid_straight(char *piece, int from_x, int from_y, int to_x, int to_y)
+/*
+see if a piece can be placed at a coordinate
+returns:
+    0 if valid
+    -1 if not valid
+*/
+int valid_place(char piece, int to_x, int to_y)
+{
+    char existing = get_piece(to_x, to_y);
+    return existing ^
+}
+
+int valid_straight(char piece, int from_x, int from_y, int to_x, int to_y)
 {
     if (from_x != to_x && from_y != to_y)
     {
@@ -135,8 +172,15 @@ int main(int argc, char const *argv[])
 {
     n = 8;
     init_board(n);
-    // board_dump(board);
-    print_board(board);
+    board_dump(board);
+    // print_board(board);
+
+    // printf("\n");
+    // print_bytes(get_piece(0, 0));
+    // printf("\n");
+    // print_bytes(get_piece(0, 1));
+    // printf("\n");
+    // print_bytes(get_piece(0, 10));
     printf("\n");
     return 0;
 }

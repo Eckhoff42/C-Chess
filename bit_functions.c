@@ -39,8 +39,3 @@ void insert_right(char piece, char *tuple)
 	piece = move_right(piece);
 	*tuple = *tuple | piece; // sett inn brikken
 }
-
-int valid_move(char *piece, char *to)
-{
-	return -1;
-}
