@@ -59,9 +59,13 @@ const char HEST = 8;      // 0001
 const char DRONNING = 12; // 0011
 const char KONGE = 14;    // 0111
 
-int n;
+int n;            // size of the side of the boardd
 char board[8][4]; // TODO: should be n/2
 
+/*
+write a piece to a coordinate in the board.
+Does not check if the move is valid.
+*/
 char place_piece(char piece, int x, int y)
 {
     // se om brikken er utenfor brettet
@@ -107,6 +111,9 @@ char get_piece(int x, int y)
     }
 }
 
+/*
+place the correct pieces at the correct position at the board.
+*/
 void init_board(int n)
 {
     int y, x;
@@ -163,6 +170,12 @@ int valid_place(char piece, int to_x, int to_y)
     return piece ^ existing;
 }
 
+/*
+return the highest number of positions the piece can move straight
+returns
+    the number of positions it can move
+    0 if the piece cant move
+*/
 int valid_straight(char piece, int from_x, int from_y, int to_x, int to_y)
 {
     if (from_x != to_x && from_y != to_y)
@@ -178,7 +191,6 @@ int main(int argc, char const *argv[])
     n = 8;
     init_board(n);
     board_dump(board);
-    // print_board(board);
 
     return 0;
 }

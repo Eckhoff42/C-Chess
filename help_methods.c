@@ -2,6 +2,9 @@
 #include "help_methods.h"
 #include "bit_functions.h"
 
+/*
+create an array matching base10 value of piece with a character
+*/
 void init_pieces(char *p)
 {
     p[0] = ' ';  // TOM
@@ -19,6 +22,9 @@ void init_pieces(char *p)
     p[15] = 'k'; // KONGE Svart
 }
 
+/*
+print a byte as binary
+*/
 void print_bytes(char c)
 {
 
@@ -29,7 +35,10 @@ void print_bytes(char c)
     }
 }
 
-void print_n_bytes(char c, int n)
+/*
+print n bit of a byte
+*/
+void print_n_bit(char c, int n)
 {
 
     for (int bit = 0; bit < n; bit++)
@@ -39,6 +48,9 @@ void print_n_bytes(char c, int n)
     }
 }
 
+/*
+print the same char n times;
+*/
 void print_repeating_char(char c, int n)
 {
     for (int i = 0; i < n; i++)
@@ -48,7 +60,9 @@ void print_repeating_char(char c, int n)
 }
 
 // TODO: use a dictionary map bytes to its representation
-
+/*
+print the bytes of the board. in the 4 * 8 format
+*/
 void board_dump(char board[8][4])
 {
 
@@ -64,6 +78,10 @@ void board_dump(char board[8][4])
     }
 }
 
+/*
+pretty print the board.
+Piece symbols are defined in init_pieces
+*/
 void print_board(char board[8][4])
 {
     char pieces[255] = "";
