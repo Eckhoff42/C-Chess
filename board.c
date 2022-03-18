@@ -149,13 +149,18 @@ void init_board(int n)
 /*
 see if a piece can be placed at a coordinate
 returns:
-    0 if valid
-    -1 if not valid
+    0 if not valid
+    1 if not valid
 */
 int valid_place(char piece, int to_x, int to_y)
 {
     char existing = get_piece(to_x, to_y);
-    return existing ^
+    if (existing == 0)
+        return 1;
+
+    existing = existing & 1; // bit 1-7 settes til 0
+    piece = piece & 1;       // bit 1-7 settes til 0
+    return piece ^ existing;
 }
 
 int valid_straight(char piece, int from_x, int from_y, int to_x, int to_y)
@@ -175,12 +180,5 @@ int main(int argc, char const *argv[])
     board_dump(board);
     // print_board(board);
 
-    // printf("\n");
-    // print_bytes(get_piece(0, 0));
-    // printf("\n");
-    // print_bytes(get_piece(0, 1));
-    // printf("\n");
-    // print_bytes(get_piece(0, 10));
-    printf("\n");
     return 0;
 }
