@@ -59,7 +59,7 @@ const char HEST = 8;      // 0001
 const char DRONNING = 12; // 0011
 const char KONGE = 14;    // 0111
 
-int n;            // size of the side of the boardd
+int n;            // size of the side of the board
 char board[8][4]; // TODO: should be n/2
 
 /*
@@ -156,14 +156,15 @@ void init_board(int n)
 /*
 see if a piece can be placed at a coordinate
 returns:
+    1 if valid
+    2 if target is empty
     0 if not valid
-    1 if not valid
 */
 int valid_place(char piece, int to_x, int to_y)
 {
     char existing = get_piece(to_x, to_y);
     if (existing == 0)
-        return 1;
+        return 2;
 
     existing = existing & 1; // bit 1-7 settes til 0
     piece = piece & 1;       // bit 1-7 settes til 0
@@ -171,26 +172,51 @@ int valid_place(char piece, int to_x, int to_y)
 }
 
 /*
-return the highest number of positions the piece can move straight
-returns
-    the number of positions it can move
-    0 if the piece cant move
+check if there is a valid straight path between from and to
+returns:
+    1 if it exists
+    0 if it does not exist
 */
-int valid_straight(char piece, int from_x, int from_y, int to_x, int to_y)
+int valid_straight(int from_x, int from_y, int to_x, int to_y)
 {
+    // the move is not straight
     if (from_x != to_x && from_y != to_y)
     {
-        return -1;
+        return 0;
     }
 
-    return 1;
+    char piece = get_piece(from_x, from_y);
+
+    // check if there is a piece at a given position
+    if (piece == 127)
+    {
+        return 0;
+    }
+
+    // the move is up
+    if (from_y < to_y)
+    {
+        for (int y = from_y; y <= to_y; y--)
+        {
+            if (!valid_place(piece, from_x, y))
+                return 0;
+        }
+        return 1;
+    }
+
+    // for (int y = from)
+
+    // for (int)
+    return 0;
 }
 
 int main(int argc, char const *argv[])
 {
     n = 8;
     init_board(n);
-    board_dump(board);
+    // board_dump(board);
+    print_board(board);
 
+    printf("\n");
     return 0;
 }
