@@ -179,44 +179,132 @@ returns:
 */
 int valid_straight(int from_x, int from_y, int to_x, int to_y)
 {
-    // the move is not straight
-    if (from_x != to_x && from_y != to_y)
+    // the move is not straight or no move at all
+    if ((from_x != to_x && from_y != to_y) || (from_x == to_x && from_y == to_y))
     {
         return 0;
     }
 
     char piece = get_piece(from_x, from_y);
-
-    // check if there is a piece at a given position
+    // check if there is a piece at the given position
     if (piece == 127)
-    {
         return 0;
-    }
 
-    // the move is up
-    if (from_y < to_y)
+    // move is up
+    if (from_y > to_y)
     {
-        for (int y = from_y; y <= to_y; y--)
+        for (int y = from_y - 1; y >= to_y; y--)
         {
-            if (!valid_place(piece, from_x, y))
+            switch (valid_place(piece, from_x, y))
+            {
+            // empty piece
+            case 2:
+                break;
+
+            // enemy piece
+            case 1:
+                if (y != to_y)
+                    return 0;
+                break;
+
+            // own piece (returnvalue 0)
+            default:
                 return 0;
+            }
         }
-        return 1;
     }
 
-    // for (int y = from)
+    // move is down
+    else if (from_y < to_y)
+    {
+        printf("down\n");
+        for (int y = from_y + 1; y <= to_y; y++)
+        {
+            switch (valid_place(piece, from_x, y))
+            {
+            // empty piece
+            case 2:
+                break;
 
-    // for (int)
-    return 0;
+            // enemy piece
+            case 1:
+                if (y != to_y)
+                    return 0;
+                break;
+
+            // own piece (case 0)
+            default:
+                return 0;
+            }
+        }
+    }
+
+    // move is left
+    else if (from_x > to_x)
+    {
+        for (int x = from_x - 1; x >= to_x; x--)
+        {
+            switch (valid_place(piece, x, from_y))
+            {
+            // empty piece
+            case 2:
+                break;
+
+            // enemy piece
+            case 1:
+                if (x != to_x)
+                    return 0;
+                break;
+
+            // own piece (case 0)
+            default:
+                return 0;
+            }
+        }
+    }
+
+    // move is right
+    else if (from_x < to_x)
+    {
+        for (int x = from_x + 1; x <= to_x; x++)
+        {
+            switch (valid_place(piece, x, from_y))
+            {
+            // empty piece
+            case 2:
+                break;
+
+            // enemy piece
+            case 1:
+                if (x != to_x)
+                    return 0;
+                break;
+
+            // own piece (case 0)
+            default:
+                return 0;
+            }
+        }
+    }
+
+    return 1;
 }
 
 int main(int argc, char const *argv[])
 {
     n = 8;
     init_board(n);
+
+    place_piece(BONDE, 6, 4);
+    place_piece(BONDE, 5, 4);
+    place_piece(turn_black(BONDE), 2, 4);
+
     // board_dump(board);
     print_board(board);
 
     printf("\n");
+    printf("%d\n", valid_straight(2, 2, 2, 2));
+    // printf("%d\n", valid_straight(0, 1, 0, 6));
+
     return 0;
 }
