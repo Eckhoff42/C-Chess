@@ -107,3 +107,14 @@ void print_board(char board[8][4])
     }
     print_repeating_char('-', 37);
 }
+
+/*
+returns if the position is inside the board
+returns
+    1 if inside
+    0 if outside
+*/
+int inside_board(int x, int y, int n)
+{
+    return !(x > n || y > n || x < 0 || y < 0);
+}
