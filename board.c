@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <strings.h>
+#include <string.h>
 #include <stdlib.h>
 
 #include "help_methods.h"
 #include "bit_functions.h"
+#include "test_chess.h"
 
 // et brett ser slikt ut
 //---------------------------------
@@ -15,9 +17,9 @@
 //---------------------------------
 //| 3 |   |   |   |   |   |   |   |
 //---------------------------------
-//| 4 |   |   |   |   |   |   |   |
+//| 4 |   |   |   | x |   |   |   |
 //---------------------------------
-//| 5 |   |   |   |   |   |   |   |
+//| 5 |   |   | a |   |   |   |   |
 //---------------------------------
 //| 6 |   |   |   |   |   |   |   |
 //---------------------------------
@@ -49,16 +51,6 @@
 //| 7 |   |   |   |
 //|---------------|
 //  ^--- y verdier
-
-// BLACK                  // 1xxx
-// WHITE                  // 0xxx
-// const char EMPTY = 0;  // 0000 - tom
-// const char PAWN = 2;   // 0100 - bonde
-// const char ROOK = 6;   // 0110 - tårn
-// const char QUEEN = 14; // 0111 - dronning
-// const char KING = 10;  // 0101 - konge
-// const char BISHOP = 8; // 0001 - løper
-// const char KNIGHT = 4; // 0010 - hest
 
 int n;            // size of the side of the board
 char board[8][4]; // TODO: should be n/2
@@ -113,6 +105,16 @@ char get_piece(int x, int y)
     {
         return get_right(tuple);
     }
+}
+
+
+int move_piece(int from_x, int from_y, int to_x, int to_y) 
+{
+    int success = 0;
+    char peace = get_piece(from_x, from_y);
+    success = place_piece(peace, to_x, to_y);
+    success = success && place_piece(EMPTY, from_x, from_y);
+    return success;
 }
 
 /*
@@ -344,7 +346,7 @@ int valid_diagonal(int from_x, int from_y, int to_x, int to_y, int max_steps)
     // down right
     if (from_x < to_x && from_y < to_y)
     {
-        printf("down right\n");
+        // printf("down right\n");
         for (int offset = 1; offset <= (to_x - from_x); offset++)
         {
             if (!valid_move_switch(piece, from_x + offset, from_y + offset, to_y, 'y'))
@@ -355,7 +357,7 @@ int valid_diagonal(int from_x, int from_y, int to_x, int to_y, int max_steps)
     // down left
     if (from_x > to_x && from_y < to_y)
     {
-        printf("down left\n");
+        // printf("down left\n");
         for (int offset = 1; offset <= (from_x - to_x); offset++)
         {
             if (!valid_move_switch(piece, from_x - offset, from_y + offset, to_y, 'y'))
@@ -366,7 +368,7 @@ int valid_diagonal(int from_x, int from_y, int to_x, int to_y, int max_steps)
     // up right
     if (from_x < to_x && from_y > to_y)
     {
-        printf("up right\n");
+        // printf("up right\n");
         for (int offset = 1; offset <= (to_x - from_x); offset++)
         {
             if (!valid_move_switch(piece, from_x + offset, from_y - offset, to_y, 'y'))
@@ -377,7 +379,7 @@ int valid_diagonal(int from_x, int from_y, int to_x, int to_y, int max_steps)
     // up left
     if (from_x > to_x && from_y > to_y)
     {
-        printf("up left\n");
+        // printf("up left\n");
         for (int offset = 1; offset <= (from_x - to_x); offset++)
         {
             if (!valid_move_switch(piece, from_x - offset, from_y - offset, to_y, 'y'))
@@ -518,6 +520,37 @@ int get_user_input(int *x, int *y, int *to_x, int *to_y)
     printf("%d | (%d, %d) -> (%d %d)\n", res, *x, *y, *to_x, *to_y);
 }
 
+/*
+check if a king at a given position would be in check
+args:
+    x, y - position of king
+    turn - 0 if white, 1 if black
+returns:
+    1 if in check
+    0 if not in check
+    2 if in checkmate
+*/
+int checked_position(int x, int y, int turn)
+{
+    // TODO
+    return 0;
+}
+
+/*
+check if the king is in check
+args:
+    turn - 0 if white, 1 if black
+returns:
+    1 if in check
+    0 if not in check
+    2 if in checkmate
+*/
+int in_check(int turn)
+{
+    // TODO
+    return 0;
+}
+
 void play()
 {
     int done = 0;
@@ -578,6 +611,12 @@ void play()
 int main(int argc, char const *argv[])
 {
     n = 8;
+
+    if (argc > 1 && strcmp(argv[0],"test"))
+    {
+        run_all_tests();
+        return 0;
+    }
 
     play();
     return 0;
