@@ -52,13 +52,13 @@
 
 // BLACK                  // 1xxx
 // WHITE                  // 0xxx
-const char EMPTY = 0;  // 0000
-const char PAWN = 2;   // 0100
-const char ROOK = 4;   // 0010
-const char BISHOP = 6; // 0110
-const char KNIGHT = 8; // 0001
-const char QUEEN = 12; // 0011
-const char KING = 14;  // 0111
+const char EMPTY = 0;  // 0000 - tom
+const char PAWN = 2;   // 0100 - bonde
+const char ROOK = 6;   // 0110 - tårn
+const char QUEEN = 14; // 0111 - dronning
+const char KING = 10;  // 0101 - konge
+const char BISHOP = 8; // 0001 - løper
+const char KNIGHT = 4; // 0010 - hest
 
 int n;            // size of the side of the board
 char board[8][4]; // TODO: should be n/2
@@ -403,8 +403,40 @@ void play()
 int main(int argc, char const *argv[])
 {
     n = 8;
-
-    play();
+    init_board(n);
+    print_bytes(1);
+    printf("\n");
+    print_bytes(2);
+    printf("\n");
+    print_bytes(3);
+    printf("\n");
+    print_bytes(4);
+    printf("\n");
+    print_bytes(5);
+    printf("\n");
+    print_bytes(6);
+    printf("\n");
+    print_bytes(7);
+    printf("\n");
+    print_bytes(8);
+    printf("\n");
+    print_bytes(9);
+    printf("\n");
+    print_bytes(10);
+    printf("\n");
+    print_bytes(11);
+    printf("\n");
+    print_bytes(12);
+    printf("\n");
+    print_bytes(13);
+    printf("\n");
+    print_bytes(14);
+    printf("\n");
+    print_bytes(15);
+    printf("\n");
+    print_bytes(16);
+    printf("\n");
+    // play();
 
     return 0;
 }

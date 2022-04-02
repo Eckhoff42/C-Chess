@@ -61,3 +61,15 @@ void insert_right(char piece, char *tuple)
 	piece = move_right(piece);
 	*tuple = *tuple | piece; // sett inn brikken
 }
+
+/*
+determine if a piece is Black
+*/
+int is_black(char piece)
+{
+	return piece & 1;
+}
+
+/*
+Determine if a piece is a pawn
+*/

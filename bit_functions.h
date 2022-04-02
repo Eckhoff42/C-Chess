@@ -5,3 +5,4 @@ void insert_left(char piece, char *tuple);
 void insert_right(char piece, char *tuple);
 char get_left(char c);
 char get_right(char c);
+int is_black(char piece);
