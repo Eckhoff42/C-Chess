@@ -1,3 +1,4 @@
+#include "help_methods.h"
 /*
 set leftmost bit to 1
 */
@@ -71,5 +72,41 @@ int is_black(char piece)
 }
 
 /*
-Determine if a piece is a pawn
+determine if a piece can move straight
 */
+int can_move_straight(char piece)
+{
+	char p = turn_white(piece);
+	return p & 2;
+}
+
+/*
+determine if a piece can move only one step straight
+*/
+int can_move_one_straight(char piece)
+{
+	char p = turn_white(piece);
+	return ((p & 6) == 2);
+}
+
+/*
+determine if a piece can move diagonal
+*/
+int can_move_diagonal(char piece)
+{
+	if (turn_white(piece) == PAWN)
+	{
+		return 1;
+	}
+	char p = turn_white(piece);
+	return p & 8;
+}
+
+/*
+determine if a piece can move in an L shape
+*/
+int can_move_L_shape(char piece)
+{
+	char p = turn_white(piece);
+	return (p == KNIGHT || p == QUEEN);
+}

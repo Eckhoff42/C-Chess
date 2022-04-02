@@ -7,19 +7,19 @@ create an array matching base10 value of piece with a character
 */
 void init_pieces(char *p)
 {
-    p[0] = ' ';  // EMPTY
-    p[2] = 'P';  // PAWN white
-    p[3] = 'p';  // PAWN black
-    p[4] = 'R';  // ROOK white
-    p[5] = 'r';  // ROOK black
-    p[6] = 'B';  // BISHOP white
-    p[7] = 'b';  // BISHOP black
-    p[8] = 'H';  // KNIGHT white
-    p[9] = 'h';  // KNIGHT black
-    p[12] = 'Q'; // QUEEN white
-    p[13] = 'q'; // QUEEN black
-    p[14] = 'K'; // KING white
-    p[15] = 'k'; // KING black
+    p[EMPTY] = ' ';      // EMPTY
+    p[PAWN] = 'P';       // PAWN white
+    p[PAWN + 1] = 'p';   // PAWN black
+    p[ROOK] = 'R';       // ROOK white
+    p[ROOK + 1] = 'r';   // ROOK black
+    p[BISHOP] = 'B';     // BISHOP white
+    p[BISHOP + 1] = 'b'; // BISHOP black
+    p[KNIGHT] = 'H';     // KNIGHT white
+    p[KNIGHT + 1] = 'h'; // KNIGHT black
+    p[QUEEN] = 'Q';      // QUEEN white
+    p[QUEEN + 1] = 'q';  // QUEEN black
+    p[KING] = 'K';       // KING white
+    p[KING + 1] = 'k';   // KING black
 }
 
 /*

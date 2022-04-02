@@ -17,13 +17,14 @@ The first bit represents the color - `0` for white, `1` for black
 The pieces are represented like this:
 ```c
 EMPTY = 0  // 0000
-KING = 2   // 0100
-BISHOP = 8 // 0010
+PAWN = 2   // 0100
 ROOK = 6   // 0110
-KNIGHT = 4 // 0001
-PAWN = 10  // 0101
 QUEEN = 14 // 0111
+KING = 10  // 0101
+BISHOP = 8 // 0001
+KNIGHT = 4 // 0010
 ```
+
 The pieces are assigned the numbers to make attributes easy to get with a single mask. 
 1. **can move straight mask** : `0100` == `0100`
 2. **can move straight only one piece** : `0110` == `0100`

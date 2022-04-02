@@ -52,13 +52,13 @@
 
 // BLACK                  // 1xxx
 // WHITE                  // 0xxx
-const char EMPTY = 0;  // 0000 - tom
-const char PAWN = 2;   // 0100 - bonde
-const char ROOK = 6;   // 0110 - tårn
-const char QUEEN = 14; // 0111 - dronning
-const char KING = 10;  // 0101 - konge
-const char BISHOP = 8; // 0001 - løper
-const char KNIGHT = 4; // 0010 - hest
+// const char EMPTY = 0;  // 0000 - tom
+// const char PAWN = 2;   // 0100 - bonde
+// const char ROOK = 6;   // 0110 - tårn
+// const char QUEEN = 14; // 0111 - dronning
+// const char KING = 10;  // 0101 - konge
+// const char BISHOP = 8; // 0001 - løper
+// const char KNIGHT = 4; // 0010 - hest
 
 int n;            // size of the side of the board
 char board[8][4]; // TODO: should be n/2
@@ -204,23 +204,40 @@ int valid_move_switch(char piece, int x, int y, int end, char end_coordinate)
 }
 
 /*
-check if there is a valid straight path between from and to
+check if there is a valid straight path between from and to.
+NB does not check if a piece exists or if the move is empty.
+args:
+    from_x - x coordinate of the piece
+    from_y - y coordinate of the piece
+    to_x - x coordinate of the target
+    to_y - y coordinate of the target
+    max_steps - maximum number of steps allowed (0 = infinite)
+    direction - direction of the path (-1 = up, 0 = any, 1 = down)
 returns:
     1 if it exists
     0 if it does not exist
 */
-int valid_straight(int from_x, int from_y, int to_x, int to_y)
+int valid_straight(int from_x, int from_y, int to_x, int to_y, int max_steps, int direction)
 {
-    // the move is not straight or no move at all
-    if ((from_x != to_x && from_y != to_y) || (from_x == to_x && from_y == to_y))
+    // the move is not straight
+    if ((from_x != to_x && from_y != to_y))
+        return 0;
+
+    // the move is longer than max_steps
+    if (max_steps != 0 && (abs(from_x - to_x) + abs(from_y - to_y)) > max_steps)
     {
+        // printf("too long\n");
         return 0;
     }
 
-    // check if there is a piece at the given position
-    char piece = get_piece(from_x, from_y);
-    if (piece == 127)
+    // the move is not in the right direction
+    if ((direction != 0 && (direction == -1 && from_y < to_y)) || (direction == 1 && from_y > to_y))
+    {
+        // printf("wrong direction\n");
         return 0;
+    }
+
+    char piece = get_piece(from_x, from_y);
 
     // move is up
     if (from_y > to_y)
@@ -266,24 +283,63 @@ int valid_straight(int from_x, int from_y, int to_x, int to_y)
 }
 
 /*
+check if the piece can legally move straight between coordinates
+returns:
+    1 if it can
+    0 if it cannot
+*/
+int piece_valid_straight_move(char piece, int from_x, int from_y, int to_x, int to_y)
+{
+    if (turn_white(piece) == PAWN)
+    {
+        int direction = (is_black(piece)) ? 1 : -1;
+
+        // en passant
+        if ((from_y == 6 || from_y == 1))
+        {
+            if (is_black(piece))
+                return valid_straight(from_x, from_y, to_x, to_y, 2, direction);
+            else
+                return valid_straight(from_x, from_y, to_x, to_y, 2, direction);
+        }
+        // normal move
+        else
+        {
+            return valid_straight(from_x, from_y, to_x, to_y, 1, direction);
+        }
+    }
+
+    else if (turn_white(piece) == KING)
+    {
+        // TODO: handle casting
+        return valid_straight(from_x, from_y, to_x, to_y, 1, 0);
+    }
+
+    else
+        return valid_straight(from_x, from_y, to_x, to_y, 0, 0);
+}
+
+/*
 check if there is a valid diagonal path between from and to
+NB does not check if a piece exists or if the move is empty.
 returns:
     1 if it exists
     0 if it does not exist
 */
-int valid_diagonal(int from_x, int from_y, int to_x, int to_y)
+int valid_diagonal(int from_x, int from_y, int to_x, int to_y, int max_steps)
 {
     int horizontal = from_x - to_x;
     int vertical = from_y - to_y;
 
     // not horizontal move or no move at all
-    if ((abs(horizontal) != abs(vertical)) || (from_x == to_x && from_y == to_y))
+    if ((abs(horizontal) != abs(vertical)))
+        return 0;
+
+    // the move is longer than max_steps
+    if (max_steps != 0 && (abs(horizontal) > max_steps))
         return 0;
 
     char piece = get_piece(from_x, from_y);
-    // no piece at given position
-    if (piece == 127)
-        return 0;
 
     // down right
     if (from_x < to_x && from_y < to_y)
@@ -333,7 +389,52 @@ int valid_diagonal(int from_x, int from_y, int to_x, int to_y)
 }
 
 /*
+check if the piece can legally move diagonal between coordinates
+returns:
+    1 if it can
+    0 if it cannot
+*/
+int piece_valid_diagonal_move(char piece, int from_x, int from_y, int to_x, int to_y)
+{
+
+    if (turn_white(piece) == KING)
+    {
+        return valid_diagonal(from_x, from_y, to_x, to_y, 1);
+    }
+
+    else if (turn_white(piece) == PAWN)
+    {
+        printf("pawn\n");
+        // distance to target is 1 diagonal
+        if (abs(from_x - to_x) == 1 && abs(from_y - to_y) == 1)
+        {
+            printf("inside\n");
+            if (is_black(piece) && to_y - from_y > 0)
+            {
+                char target = get_piece(to_x, to_y);
+                return (target != 0 && !is_black(target));
+            }
+
+            else if (!is_black(piece) && to_y - from_y < 0)
+            {
+                char target = get_piece(to_x, to_y);
+                printf("target: %c\n", target);
+                return (target != 0 && is_black(target));
+            }
+        }
+        printf("not valid diagonal move\n");
+        return 0;
+    }
+
+    else
+    {
+        return valid_diagonal(from_x, from_y, to_x, to_y, 0);
+    }
+}
+
+/*
 checks if a L-move is valid
+NB does not check if a piece exists or if the move is empty.
 returns
     0 - not valid
     1 - valid enemy
@@ -341,10 +442,6 @@ returns
 */
 int valid_L_shape(int from_x, int from_y, int to_x, int to_y)
 {
-    // outside board
-    if (!inside_board(from_x, from_y, n) || !inside_board(to_x, to_y, n))
-        return 0;
-
     // not int the L shape
     if (abs(from_x - to_x) + abs(from_y - to_y) != 3)
     {
@@ -353,10 +450,72 @@ int valid_L_shape(int from_x, int from_y, int to_x, int to_y)
 
     char piece = get_piece(from_x, from_y);
     // no piece at given from position
+
+    return valid_place(piece, to_x, to_y);
+}
+
+/*
+see if a piece can moved from a to b
+returns:
+    0 if not valid
+    1 if valid
+*/
+int valid_move(int from_x, int from_y, int to_x, int to_y)
+{
+    // outside board
+    if (!inside_board(from_x, from_y, n) || !inside_board(to_x, to_y, n))
+        return 0;
+
+    // no move at all
+    if (from_x == to_x && from_y == to_y)
+        return 0;
+
+    // check if there is a piece at the given position
+    char piece = get_piece(from_x, from_y);
     if (piece == 127)
         return 0;
 
-    return valid_place(piece, to_x, to_y);
+    int valid_move = 0;
+    // straight move
+    if (can_move_straight(piece))
+    {
+        valid_move = valid_move || piece_valid_straight_move(piece, from_x, from_y, to_x, to_y);
+    }
+
+    // diagonal move
+    if (can_move_diagonal(piece) && !valid_move)
+    {
+        valid_move = valid_move || piece_valid_diagonal_move(piece, from_x, from_y, to_x, to_y);
+    }
+
+    // L-shaped move
+    if (can_move_L_shape(piece) && !valid_move)
+    {
+        valid_move = valid_move || valid_L_shape(from_x, from_y, to_x, to_y);
+    }
+
+    return valid_move;
+}
+
+/*
+get user input to and from coordinates
+returns:
+    >0 if successful
+    0 if failed
+*/
+int get_user_input(int *x, int *y, int *to_x, int *to_y)
+{
+    printf("specify from\n");
+    int res = scanf("%d,%d", x, y);
+
+    if (!res)
+        return 0;
+
+    printf("specify to\n");
+    res = scanf("%d,%d", to_x, to_y);
+
+    return res;
+    printf("%d | (%d, %d) -> (%d %d)\n", res, *x, *y, *to_x, *to_y);
 }
 
 void play()
@@ -368,75 +527,58 @@ void play()
 
     while (!done)
     {
-        round++;
         print_board(board);
+        if (round % 2 == 0)
+            printf("white turn\n");
+        else
+            printf("black turn\n");
 
-        int valid_move = 0;
+        int valid = 0;
         int x, y, to_x, to_y = -1;
-        while (!valid_move)
+        while (!valid)
         {
-            printf("specify from\n");
-            int res = scanf("%d,%d", &x, &y);
-
-            if (!res)
+            int success = get_user_input(&x, &y, &to_x, &to_y);
+            if (!success)
             {
+                printf("invalid input\n");
+                continue;
             }
 
-            printf("specify to\n");
-            res = scanf("%d,%d", &to_x, &to_y);
-
-            printf("%d | (%d, %d) -> (%d %d)\n", res, x, y, to_x, to_y);
-
-            valid_move = valid_straight(x, y, to_x, to_y);
-            if (!valid_move)
+            char peace = get_piece(x, y);
+            // check if there is a piece
+            if (peace == 127 || peace == 0)
             {
-                printf("Move is not allowed. Try again\n ");
+                printf("no piece at given position\n");
+                continue;
+            }
+
+            // check if the color is incorrect
+            if ((round % 2 == 0 && is_black(peace)) || (round % 2 == 1 && !is_black(peace)))
+            {
+                printf("wrong color\n");
+                continue;
+            }
+
+            // check if the move is valid
+            valid = valid_move(x, y, to_x, to_y);
+            if (!valid)
+            {
+                printf("invalid move, try again\n");
+                continue;
             }
         }
 
         char peace = get_piece(x, y);
         place_piece(peace, to_x, to_y);
         place_piece(EMPTY, x, y);
+        round++;
     }
 }
 
 int main(int argc, char const *argv[])
 {
     n = 8;
-    init_board(n);
-    print_bytes(1);
-    printf("\n");
-    print_bytes(2);
-    printf("\n");
-    print_bytes(3);
-    printf("\n");
-    print_bytes(4);
-    printf("\n");
-    print_bytes(5);
-    printf("\n");
-    print_bytes(6);
-    printf("\n");
-    print_bytes(7);
-    printf("\n");
-    print_bytes(8);
-    printf("\n");
-    print_bytes(9);
-    printf("\n");
-    print_bytes(10);
-    printf("\n");
-    print_bytes(11);
-    printf("\n");
-    print_bytes(12);
-    printf("\n");
-    print_bytes(13);
-    printf("\n");
-    print_bytes(14);
-    printf("\n");
-    print_bytes(15);
-    printf("\n");
-    print_bytes(16);
-    printf("\n");
-    // play();
 
+    play();
     return 0;
 }

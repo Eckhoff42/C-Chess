@@ -6,3 +6,7 @@ void insert_right(char piece, char *tuple);
 char get_left(char c);
 char get_right(char c);
 int is_black(char piece);
+int can_move_straight(char piece);
+int can_move_one_straight(char piece);
+int can_move_diagonal(char piece);
+int can_move_L_shape(char piece);
