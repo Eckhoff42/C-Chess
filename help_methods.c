@@ -7,19 +7,19 @@ create an array matching base10 value of piece with a character
 */
 void init_pieces(char *p)
 {
-    p[0] = ' ';  // TOM
-    p[2] = 'B';  // BONDE Hvit
-    p[3] = 'b';  // BONDE Svart
-    p[4] = 'T';  // TAARN Hvit
-    p[5] = 't';  // TAARN Svart
-    p[6] = 'S';  // SPRINGER Hvit
-    p[7] = 's';  // SPRINGER Svart
-    p[8] = 'H';  // HEST Hvit
-    p[9] = 'h';  // HEST Svart
-    p[12] = 'D'; // DRONNING Hvit
-    p[13] = 'd'; // DRONNING Svart
-    p[14] = 'K'; // KONGE Hvit
-    p[15] = 'k'; // KONGE Svart
+    p[0] = ' ';  // EMPTY
+    p[2] = 'P';  // PAWN white
+    p[3] = 'p';  // PAWN black
+    p[4] = 'R';  // ROOK white
+    p[5] = 'r';  // ROOK black
+    p[6] = 'B';  // BISHOP white
+    p[7] = 'b';  // BISHOP black
+    p[8] = 'H';  // KNIGHT white
+    p[9] = 'h';  // KNIGHT black
+    p[12] = 'Q'; // QUEEN white
+    p[13] = 'q'; // QUEEN black
+    p[14] = 'K'; // KING white
+    p[15] = 'k'; // KING black
 }
 
 /*
@@ -106,6 +106,7 @@ void print_board(char board[8][4])
         printf("|\n");
     }
     print_repeating_char('-', 37);
+    printf("\n");
 }
 
 /*

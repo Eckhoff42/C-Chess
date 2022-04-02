@@ -52,13 +52,13 @@
 
 // BLACK                  // 1xxx
 // WHITE                  // 0xxx
-const char TOM = 0;       // 0000
-const char BONDE = 2;     // 0100
-const char TAARN = 4;     // 0010
-const char SPRINGER = 6;  // 0110
-const char HEST = 8;      // 0001
-const char DRONNING = 12; // 0011
-const char KONGE = 14;    // 0111
+const char EMPTY = 0;  // 0000
+const char PAWN = 2;   // 0100
+const char ROOK = 4;   // 0010
+const char BISHOP = 6; // 0110
+const char KNIGHT = 8; // 0001
+const char QUEEN = 12; // 0011
+const char KING = 14;  // 0111
 
 int n;            // size of the side of the board
 char board[8][4]; // TODO: should be n/2
@@ -128,27 +128,27 @@ void init_board(int n)
     // sett inn bønder
     for (x = 0; x < n; x++)
     {
-        place_piece(turn_black(BONDE), x, 1);
-        place_piece(BONDE, x, 6);
+        place_piece(turn_black(PAWN), x, 1);
+        place_piece(PAWN, x, 6);
     }
 
     // sett inn Tårn, Hest, Springer
     for (y = 0; y < n; y += 7)
     {
-        place_piece(TAARN, 0, y);
-        place_piece(TAARN, 7 - 0, y);
+        place_piece(ROOK, 0, y);
+        place_piece(ROOK, 7 - 0, y);
 
-        place_piece(HEST, 1, y);
-        place_piece(HEST, 7 - 1, y);
+        place_piece(KNIGHT, 1, y);
+        place_piece(KNIGHT, 7 - 1, y);
 
-        place_piece(SPRINGER, 2, y);
-        place_piece(SPRINGER, 7 - 2, y);
+        place_piece(BISHOP, 2, y);
+        place_piece(BISHOP, 7 - 2, y);
     }
     // sett inn Konge og Dronning
-    place_piece(KONGE, 3, 0);
-    place_piece(KONGE, 4, 7);
-    place_piece(DRONNING, 3, 7);
-    place_piece(DRONNING, 4, 0);
+    place_piece(KING, 3, 0);
+    place_piece(KING, 4, 7);
+    place_piece(QUEEN, 3, 7);
+    place_piece(QUEEN, 4, 0);
 
     // brikker på y = 0 gjøres svarte
     for (x = 0; x < n / 2; x++)
@@ -180,17 +180,14 @@ int valid_place(char piece, int to_x, int to_y)
 
 int valid_move_switch(char piece, int x, int y, int end, char end_coordinate)
 {
-    printf("x: %d , y: %d -> ", x, y);
     switch (valid_place(piece, x, y))
     {
     // empty piece
     case 2:
-        printf("empty\n");
         return 1;
 
     // enemy piece
     case 1:
-        printf("enemy\n");
         if (end_coordinate == 'x')
         {
             return (x == end);
@@ -202,7 +199,6 @@ int valid_move_switch(char piece, int x, int y, int end, char end_coordinate)
 
     // own piece (returnvalue 0)
     default:
-        printf("own\n");
         return 0;
     }
 }
@@ -239,7 +235,6 @@ int valid_straight(int from_x, int from_y, int to_x, int to_y)
     // move is down
     else if (from_y < to_y)
     {
-        printf("down\n");
         for (int y = from_y + 1; y <= to_y; y++)
         {
             if (!valid_move_switch(piece, from_x, y, to_y, 'y'))
@@ -364,20 +359,52 @@ int valid_L_shape(int from_x, int from_y, int to_x, int to_y)
     return valid_place(piece, to_x, to_y);
 }
 
+void play()
+{
+    int done = 0;
+    int round = 0;
+
+    init_board(n);
+
+    while (!done)
+    {
+        round++;
+        print_board(board);
+
+        int valid_move = 0;
+        int x, y, to_x, to_y = -1;
+        while (!valid_move)
+        {
+            printf("specify from\n");
+            int res = scanf("%d,%d", &x, &y);
+
+            if (!res)
+            {
+            }
+
+            printf("specify to\n");
+            res = scanf("%d,%d", &to_x, &to_y);
+
+            printf("%d | (%d, %d) -> (%d %d)\n", res, x, y, to_x, to_y);
+
+            valid_move = valid_straight(x, y, to_x, to_y);
+            if (!valid_move)
+            {
+                printf("Move is not allowed. Try again\n ");
+            }
+        }
+
+        char peace = get_piece(x, y);
+        place_piece(peace, to_x, to_y);
+        place_piece(EMPTY, x, y);
+    }
+}
+
 int main(int argc, char const *argv[])
 {
     n = 8;
-    init_board(n);
-    // board_dump(board);
-    place_piece(BONDE, 1, 3);
-    place_piece(turn_black(BONDE), 5, 3);
-    place_piece(turn_black(BONDE), 6, 3);
-    print_board(board);
 
-    printf("\n");
-    // printf("%d\n", valid_diagonal(6, 6, 1, 1));
-    // printf("%d\n", valid_straight(5, 3, 0, 3));
-    printf("%d\n", valid_L_shape(7, 7, 9, 6));
+    play();
 
     return 0;
 }
