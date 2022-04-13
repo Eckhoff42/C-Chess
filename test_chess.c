@@ -275,7 +275,7 @@ void test_queen_take()
 
   place_piece(turn_black(PAWN), 4, 1);
   valid = valid_move(4, 4, 4, 1);
-  assert(valid != 0);
+  assert(valid == 0);
 
   place_piece(PAWN, 3, 5);
   place_piece(turn_black(PAWN), 3, 6);
@@ -289,7 +289,34 @@ void test_queen_take()
   assert(valid == 0);
 }
 
-void run_all_tests()
+void test_bishop_take()
+{
+  place_piece(BISHOP, 3, 3);
+
+  // positive tests
+  place_piece(turn_black(PAWN), 4, 2);
+  int valid = valid_move(3, 3, 4, 2);
+  assert(valid != 0);
+
+  place_piece(turn_black(PAWN), 1, 5);
+  valid = valid_move(3, 3, 1, 5);
+  assert(valid != 0);
+
+  place_piece(turn_black(PAWN), 7, 7);
+  valid = valid_move(3, 3, 7, 7);
+  assert(valid != 0);
+
+  place_piece(PAWN, 2, 2);
+  place_piece(turn_black(PAWN), 1, 1);
+  valid = valid_move(3, 3, 1, 1);
+  assert(valid == 0);
+
+  place_piece(PAWN, 4, 4);
+  valid = valid_move(3, 3, 4, 4);
+  assert(valid == 0);
+}
+
+void test_moves()
 {
   reset_board();
   test_pawn_move();
@@ -306,6 +333,10 @@ void run_all_tests()
   reset_board();
   test_queen_moves();
   reset_board();
+}
+
+void test_take()
+{
   test_pawn_take();
   reset_board();
   test_king_take();
@@ -313,6 +344,14 @@ void run_all_tests()
   test_rook_take();
   reset_board();
   test_queen_take();
+  reset_board();
+  test_bishop_take();
+}
+
+void run_all_tests()
+{
+  test_moves();
+  test_take();
 
   printf("\n\033[1;32mAll tests passed!\033[0m\n");
 }

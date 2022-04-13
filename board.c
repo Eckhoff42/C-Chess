@@ -165,7 +165,7 @@ returns:
     2 valid path to an empty space
     0 if not valid
 */
-int valid_place(char piece, int to_x, int to_y)
+int legal_placement(char piece, int to_x, int to_y)
 {
     if (!inside_board(to_x, to_y, n))
         return 0;
@@ -188,7 +188,7 @@ returns:
 */
 int valid_move_switch(char piece, int x, int y, int end, char end_coordinate)
 {
-    switch (valid_place(piece, x, y))
+    switch (legal_placement(piece, x, y))
     {
     // empty piece
     case 2:
@@ -455,7 +455,7 @@ returns
 int valid_L_shape(int from_x, int from_y, int to_x, int to_y)
 {
     // not int the L shape
-    if (abs(from_x - to_x) + abs(from_y - to_y) != 3)
+    if (from_x == to_x || from_y == to_y || (abs(from_x - to_x) + abs(from_y - to_y) != 3))
     {
         return 0;
     }
@@ -463,7 +463,7 @@ int valid_L_shape(int from_x, int from_y, int to_x, int to_y)
     char piece = get_piece(from_x, from_y);
     // no piece at given from position
 
-    return valid_place(piece, to_x, to_y);
+    return legal_placement(piece, to_x, to_y);
 }
 
 /*
