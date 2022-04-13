@@ -107,8 +107,7 @@ char get_piece(int x, int y)
     }
 }
 
-
-int move_piece(int from_x, int from_y, int to_x, int to_y) 
+int move_piece(int from_x, int from_y, int to_x, int to_y)
 {
     int success = 0;
     char peace = get_piece(from_x, from_y);
@@ -162,8 +161,8 @@ void init_board(int n)
 /*
 see if a piece can be placed at a coordinate
 returns:
-    1 if valid
-    2 if target is empty
+    1 valid path to an enemy piece
+    2 valid path to an empty space
     0 if not valid
 */
 int valid_place(char piece, int to_x, int to_y)
@@ -180,13 +179,20 @@ int valid_place(char piece, int to_x, int to_y)
     return piece ^ existing;
 }
 
+/*
+Switch statement to see if a piece can be placed at a position
+returns:
+    1 valid path to an enemy piece
+    2 valid path to an empty space
+    0 if not valid
+*/
 int valid_move_switch(char piece, int x, int y, int end, char end_coordinate)
 {
     switch (valid_place(piece, x, y))
     {
     // empty piece
     case 2:
-        return 1;
+        return 2;
 
     // enemy piece
     case 1:
@@ -216,8 +222,9 @@ args:
     max_steps - maximum number of steps allowed (0 = infinite)
     direction - direction of the path (-1 = up, 0 = any, 1 = down)
 returns:
-    1 if it exists
-    0 if it does not exist
+    1 valid path to an enemy piece
+    2 valid path to an empty space
+    0 no valid path
 */
 int valid_straight(int from_x, int from_y, int to_x, int to_y, int max_steps, int direction)
 {
@@ -241,12 +248,14 @@ int valid_straight(int from_x, int from_y, int to_x, int to_y, int max_steps, in
 
     char piece = get_piece(from_x, from_y);
 
+    int return_value = 2;
     // move is up
     if (from_y > to_y)
     {
         for (int y = from_y - 1; y >= to_y; y--)
         {
-            if (!valid_move_switch(piece, from_x, y, to_y, 'y'))
+            return_value = valid_move_switch(piece, from_x, y, to_y, 'y');
+            if (return_value == 0)
                 return 0;
         }
     }
@@ -256,7 +265,8 @@ int valid_straight(int from_x, int from_y, int to_x, int to_y, int max_steps, in
     {
         for (int y = from_y + 1; y <= to_y; y++)
         {
-            if (!valid_move_switch(piece, from_x, y, to_y, 'y'))
+            return_value = valid_move_switch(piece, from_x, y, to_y, 'y');
+            if (return_value == 0)
                 return 0;
         }
     }
@@ -266,7 +276,8 @@ int valid_straight(int from_x, int from_y, int to_x, int to_y, int max_steps, in
     {
         for (int x = from_x - 1; x >= to_x; x--)
         {
-            if (!valid_move_switch(piece, x, from_y, to_x, 'x'))
+            return_value = valid_move_switch(piece, x, from_y, to_x, 'x');
+            if (return_value == 0)
                 return 0;
         }
     }
@@ -276,19 +287,21 @@ int valid_straight(int from_x, int from_y, int to_x, int to_y, int max_steps, in
     {
         for (int x = from_x + 1; x <= to_x; x++)
         {
-            if (!valid_move_switch(piece, x, from_y, to_x, 'x'))
+            return_value = valid_move_switch(piece, x, from_y, to_x, 'x');
+            if (return_value == 0)
                 return 0;
         }
     }
 
-    return 1;
+    return return_value;
 }
 
 /*
 check if the piece can legally move straight between coordinates
 returns:
-    1 if it can
-    0 if it cannot
+    1 valid path to an enemy piece
+    2 valid path to an empty space
+    0 no valid path
 */
 int piece_valid_straight_move(char piece, int from_x, int from_y, int to_x, int to_y)
 {
@@ -307,7 +320,8 @@ int piece_valid_straight_move(char piece, int from_x, int from_y, int to_x, int 
         // normal move
         else
         {
-            return valid_straight(from_x, from_y, to_x, to_y, 1, direction);
+            // return 1 if the move is into an empty space
+            return (valid_straight(from_x, from_y, to_x, to_y, 1, direction) == 2);
         }
     }
 
@@ -406,11 +420,9 @@ int piece_valid_diagonal_move(char piece, int from_x, int from_y, int to_x, int 
 
     else if (turn_white(piece) == PAWN)
     {
-        printf("pawn\n");
         // distance to target is 1 diagonal
         if (abs(from_x - to_x) == 1 && abs(from_y - to_y) == 1)
         {
-            printf("inside\n");
             if (is_black(piece) && to_y - from_y > 0)
             {
                 char target = get_piece(to_x, to_y);
@@ -420,11 +432,9 @@ int piece_valid_diagonal_move(char piece, int from_x, int from_y, int to_x, int 
             else if (!is_black(piece) && to_y - from_y < 0)
             {
                 char target = get_piece(to_x, to_y);
-                printf("target: %c\n", target);
                 return (target != 0 && is_black(target));
             }
         }
-        printf("not valid diagonal move\n");
         return 0;
     }
 
@@ -612,7 +622,7 @@ int main(int argc, char const *argv[])
 {
     n = 8;
 
-    if (argc > 1 && strcmp(argv[0],"test"))
+    if (argc > 1 && strcmp(argv[0], "test"))
     {
         run_all_tests();
         return 0;

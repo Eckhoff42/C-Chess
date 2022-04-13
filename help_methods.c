@@ -116,5 +116,5 @@ returns
 */
 int inside_board(int x, int y, int n)
 {
-    return !(x > n || y > n || x < 0 || y < 0);
+    return !(x >= n || y >= n || x < 0 || y < 0);
 }

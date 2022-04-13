@@ -23,6 +23,8 @@ Demo is coming later
 
 ## Implementation details
 
+The general chess implementation is created intentionally not looking at other implementations as a fun challenge! The test-file is created aided by github co-pilot hence it's long and repetitive form. Everything else is implemented without github copilot aid.  
+
 ### Representing pieces
 Each peace is represented by 4 bit. This means one byte represents 2 pieces. 
 
